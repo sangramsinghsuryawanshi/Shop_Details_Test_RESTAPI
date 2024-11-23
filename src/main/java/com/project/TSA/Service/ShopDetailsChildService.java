@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.TSA.Repository.ShopDetailsRepository;
 import com.project.TSA.ShopModel.ShopDetails;
+import com.project.TSA.exception.ShopNotFoundException;
 
 @Service
 public class ShopDetailsChildService implements ShopService 
@@ -41,21 +42,24 @@ public class ShopDetailsChildService implements ShopService
 	@Override
 	public String deleteShopDetails(int shopId) 
 	{
-		if(SDR.existsById(shopId)==true)
+		ShopDetails shop = SDR.findById(shopId).orElse(null);
+		if(shop==null)
 		{
-			SDR.deleteById(shopId);
-			return "Deleted successfully..";
+			throw new ShopNotFoundException("Shop Id Does Not Exits Try Again..!");
 		}
-		else
-		{
-			return "id Not Found";
-		}
+		SDR.deleteById(shopId);
+		return "Deleted successfully.!";
 	}
 
 	@Override
-	public ShopDetails getShopDetails(int shopId) {
-		
-		return SDR.findById(shopId).get();
+	public ShopDetails getShopDetails(int shopId) 
+	{
+		ShopDetails shopdetails=SDR.findById(shopId).orElse(null);
+		if(shopdetails==null)
+		{
+		 	throw new ShopNotFoundException("Shop Does Not Exits Try Again..!");
+		}
+		return shopdetails;
 	}
 
 	@Override
